@@ -45,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
        QK_BOOT, DPI_RMOD, DPI_MOD, S_D_RMOD, S_D_MOD,    S_D_MOD, S_D_RMOD, DPI_MOD, DPI_RMOD, QK_BOOT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX,    XXXXXXX, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI,
+       KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, DRGT_CRTT,    DRGT_CRTT, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        _______, DRGSCRL, SNIPING, DRG_TOG, SNP_TOG,    SNP_TOG, DRG_TOG, SNIPING, DRGSCRL, _______,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯

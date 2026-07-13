@@ -6,6 +6,26 @@
 
 #include "wh1teend.h"
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    static uint16_t drgt_crtt_timer;
+
+    switch (keycode) {
+#ifdef POINTING_DEVICE_ENABLE
+        case DRGT_CRTT:
+            if (record->event.pressed) {
+                drgt_crtt_timer = timer_read();
+            } else if (timer_elapsed(drgt_crtt_timer) < TAPPING_TERM) {
+                charybdis_set_pointer_dragscroll_enabled(!charybdis_get_pointer_dragscroll_enabled());
+            } else {
+                charybdis_set_pointer_sniping_enabled(!charybdis_get_pointer_sniping_enabled());
+            }
+            return false;
+#endif // POINTING_DEVICE_ENABLE
+    }
+
+    return true;
+}
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #    include "timer.h"
 

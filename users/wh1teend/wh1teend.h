@@ -15,6 +15,12 @@ enum charybdis_keymap_layers {
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
+enum wh1teend_keycodes {
+    // Tap: toggle drag-scroll. Hold: toggle sniping. (Caret mode from the old
+    // fork no longer exists in bkb-procyon.)
+    DRGT_CRTT = SAFE_RANGE,
+};
+
 #define LOWER MO(LAYER_LOWER)
 #define RAISE MO(LAYER_RAISE)
 #define PT_Z LT(LAYER_POINTER, KC_Z)
