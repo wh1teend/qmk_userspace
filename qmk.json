@@ -1,5 +1,5 @@
 {
-    "userspace_version": "1.0.0",
+    "userspace_version": "1.1",
     "build_targets": [
         ["bastardkb/charybdis/3x5/splinktegrated_rev1", "vendor"],
         ["bastardkb/charybdis/3x5/splinktegrated_rev3", "vendor"],

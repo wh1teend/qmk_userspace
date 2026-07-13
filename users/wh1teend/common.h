@@ -12,14 +12,19 @@ enum charybdis_keymap_layers {
     LAYER_POINTER,
 };
 
-/** \brief Automatically enable sniping-mode on the pointer layer. */
+// Automatically enable sniping-mode on the pointer layer.
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
 enum wh1teend_keycodes {
-    // Tap: toggle drag-scroll. Hold: toggle sniping. (Caret mode from the old
-    // fork no longer exists in bkb-procyon.)
+    // Tap: toggle drag-scroll. Hold: toggle carret mode.
     DRGT_CRTT = SAFE_RANGE,
+    // Carret momentary / toggle, mirroring DRGSCRL / DRG_TOG.
+    CARRETM,
+    CRT_TOG,
 };
+
+bool get_pointer_carret_enabled(void);
+void set_pointer_carret_enabled(bool enable);
 
 #define LOWER MO(LAYER_LOWER)
 #define RAISE MO(LAYER_RAISE)

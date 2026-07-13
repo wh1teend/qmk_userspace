@@ -1,7 +1,7 @@
 // Copyright 2026 wh1teend
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "wh1teend.h"
+#include "common.h"
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -56,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, QK_BOOT, DPI_RMOD, DPI_MOD, S_D_RMOD, S_D_MOD,    S_D_MOD, S_D_RMOD, DPI_MOD, DPI_RMOD, QK_BOOT, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, DRGT_CRTT,    DRGT_CRTT, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI, XXXXXXX,
+       XXXXXXX, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, DRGT_CRTT,    CRT_TOG, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, _______, DRGSCRL, SNIPING, DRG_TOG, SNP_TOG,    SNP_TOG, DRG_TOG, SNIPING, DRGSCRL, _______, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
