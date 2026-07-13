@@ -26,7 +26,11 @@ enum charybdis_keymap_layers {
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
+#    define DRG_TOG KC_NO
 #    define DPI_MOD KC_NO
+#    define DPI_RMOD KC_NO
 #    define S_D_MOD KC_NO
+#    define S_D_RMOD KC_NO
 #    define SNIPING KC_NO
+#    define SNP_TOG KC_NO
 #endif // !POINTING_DEVICE_ENABLE
