@@ -271,6 +271,27 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 #endif // POINTING_DEVICE_ENABLE
 
+#ifdef VIA_ENABLE
+#    include "dynamic_keymap.h"
+#    include "version.h"
+
+// The layout's source of truth is keymap.c, but at runtime VIA serves layers
+// from EEPROM, seeded once. VIA itself only re-seeds when the build *date*
+// changes, so same-day rebuilds keep serving the stale layout. Track the full
+// build timestamp instead and re-seed the layers on every new build; Argos
+// combos, tap dances and trackball DPI live in other EEPROM areas and survive.
+void keyboard_post_init_user(void) {
+    uint32_t build_hash = 5381;
+    for (const char *p = QMK_BUILDDATE; *p != '\0'; ++p) {
+        build_hash = build_hash * 33 + (uint8_t)*p;
+    }
+    if (eeconfig_read_user() != build_hash) {
+        dynamic_keymap_reset();
+        eeconfig_update_user(build_hash);
+    }
+}
+#endif // VIA_ENABLE
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint16_t drgt_crtt_timer;
 
