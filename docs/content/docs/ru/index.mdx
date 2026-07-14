@@ -1,0 +1,116 @@
+---
+title: Обзор
+description: QMK userspace для клавиатур BastardKB Charybdis
+---
+
+Раскладки и общее поведение для клавиатур BastardKB Charybdis, собирается на
+форке [bastardkb-qmk](https://github.com/bastardkb/bastardkb-qmk)
+(ветка `bkb-procyon`).
+
+## Клавиатуры
+
+| Плата | Кеймапы |
+|-------|---------|
+| Charybdis 3x5 (`splinktegrated_rev1` / `rev3`) | `vendor`, `wh1teend` |
+| Charybdis 3x6 | `vendor`, `wh1teend` |
+| Charybdis 4x6 | `vendor`, `wh1teend` |
+
+- **`vendor`** — штатная раскладка BastardKB, целиком на модуле
+  [Argos](https://github.com/Bastardkb/qmk_modules) (VIA + веб-конфигуратор).
+- **`wh1teend`** — моя раскладка: 4 общих слоя, каретка, скраб-режимы,
+  акселерация курсора, фиксация оси и инерция drag-scroll, RGB-индикация
+  состояний, плюс Argos.
+
+<Cards>
+  <Card title="Клавиши и режимы" href="/ru/keys" description="Режимы трекбола, скраб-клавиши, кастомные кейкоды, RGB-индикация" />
+  <Card title="Настройка" href="/ru/configuration" description="Все параметры config.h с дефолтами и рецептами" />
+</Cards>
+
+## Структура репозитория
+
+<Files>
+  <Folder name="keyboards/…/keymaps/wh1teend" defaultOpen>
+    <File name="keymap.c" />
+    <File name="keymap.json" />
+  </Folder>
+  <Folder name="users/wh1teend" defaultOpen>
+    <File name="common.c" />
+    <File name="common.h" />
+    <File name="config.h" />
+    <File name="rules.mk" />
+  </Folder>
+  <Folder name="modules/bastardkb">
+    <Folder name="argos">
+      <File name="argos.c" />
+    </Folder>
+  </Folder>
+  <Folder name="docs">
+    <File name="этот сайт" />
+  </Folder>
+</Files>
+
+В `keymap.c` каждой платы — только её сетка клавиш; `keymap.json` подключает
+модуль Argos. Перестановка клавиши правит `keymap.c` одной платы; изменение поведения или
+настроек в `users/wh1teend/` применяется ко всем платам сразу.
+
+## Сборка и прошивка
+
+<Steps>
+<Step>
+
+### Разовая настройка
+
+```sh
+git clone -b bkb-procyon https://github.com/bastardkb/bastardkb-qmk.git
+qmk config user.qmk_home="$(realpath bastardkb-qmk)"
+qmk config user.overlay_dir="$(realpath qmk_userspace)"
+git submodule update --init --recursive   # внутри этого репозитория: модуль Argos
+```
+
+</Step>
+<Step>
+
+### Компиляция
+
+<Tabs items={['Все платы', 'Одна плата']}>
+<Tab value="Все платы">
+
+```sh
+qmk userspace-compile
+```
+
+Собирает все цели из `qmk.json`.
+
+</Tab>
+<Tab value="Одна плата">
+
+```sh
+qmk compile -kb bastardkb/charybdis/4x6 -km wh1teend
+```
+
+</Tab>
+</Tabs>
+
+Файлы `.uf2` появляются в корне клона `bastardkb-qmk`.
+
+</Step>
+<Step>
+
+### Прошивка
+
+Зажать верхнюю внутреннюю клавишу при подключении кабеля (или нажать
+`QK_BOOT` — он на LOWER и pointer-слоях), затем перетащить `.uf2` на диск
+`RPI-RP2`. Обе половины шьются одним файлом.
+
+</Step>
+</Steps>
+
+<Callout title="EE_CLR не нужен">
+Слои VIA пересеиваются из прошивки автоматически при первой загрузке каждой
+новой сборки. Комбо, тапдансы Argos и настройки DPI переживают перепрошивку.
+</Callout>
+
+## CI
+
+Каждый пуш собирает все цели из `qmk.json` через GitHub Actions и выкладывает
+прошивки на страницу Releases.

@@ -1,0 +1,116 @@
+---
+title: Overview
+description: QMK userspace for BastardKB Charybdis boards
+---
+
+Keymaps and shared behavior for BastardKB Charybdis boards, built against the
+[bastardkb-qmk](https://github.com/bastardkb/bastardkb-qmk) fork
+(`bkb-procyon` branch).
+
+## Boards
+
+| Board | Keymaps |
+|-------|---------|
+| Charybdis 3x5 (`splinktegrated_rev1` / `rev3`) | `vendor`, `wh1teend` |
+| Charybdis 3x6 | `vendor`, `wh1teend` |
+| Charybdis 4x6 | `vendor`, `wh1teend` |
+
+- **`vendor`** — stock BastardKB layout, fully driven by the
+  [Argos](https://github.com/Bastardkb/qmk_modules) module (VIA + web config).
+- **`wh1teend`** — my layout: 4 shared layers, carret mode, scrub modes,
+  pointer acceleration, drag-scroll axis lock and inertia, RGB state
+  indication, plus Argos.
+
+<Cards>
+  <Card title="Keys & modes" href="/keys" description="Trackball modes, scrub keys, custom keycodes, RGB indication" />
+  <Card title="Configuration" href="/configuration" description="Every knob in config.h with defaults and recipes" />
+</Cards>
+
+## Repository layout
+
+<Files>
+  <Folder name="keyboards/…/keymaps/wh1teend" defaultOpen>
+    <File name="keymap.c" />
+    <File name="keymap.json" />
+  </Folder>
+  <Folder name="users/wh1teend" defaultOpen>
+    <File name="common.c" />
+    <File name="common.h" />
+    <File name="config.h" />
+    <File name="rules.mk" />
+  </Folder>
+  <Folder name="modules/bastardkb">
+    <Folder name="argos">
+      <File name="argos.c" />
+    </Folder>
+  </Folder>
+  <Folder name="docs">
+    <File name="this site" />
+  </Folder>
+</Files>
+
+Each board's `keymap.c` holds only its key grid; `keymap.json` plugs in the
+Argos module. A key placement change touches one board's `keymap.c`; a behavior or settings
+change in `users/wh1teend/` applies to every board at once.
+
+## Build & flash
+
+<Steps>
+<Step>
+
+### One-time setup
+
+```sh
+git clone -b bkb-procyon https://github.com/bastardkb/bastardkb-qmk.git
+qmk config user.qmk_home="$(realpath bastardkb-qmk)"
+qmk config user.overlay_dir="$(realpath qmk_userspace)"
+git submodule update --init --recursive   # inside this repo: Argos module
+```
+
+</Step>
+<Step>
+
+### Compile
+
+<Tabs items={['All boards', 'Single board']}>
+<Tab value="All boards">
+
+```sh
+qmk userspace-compile
+```
+
+Builds every target from `qmk.json`.
+
+</Tab>
+<Tab value="Single board">
+
+```sh
+qmk compile -kb bastardkb/charybdis/4x6 -km wh1teend
+```
+
+</Tab>
+</Tabs>
+
+`.uf2` files land in the `bastardkb-qmk` clone root.
+
+</Step>
+<Step>
+
+### Flash
+
+Hold the top-inner key while plugging in (or tap `QK_BOOT` — it sits on the
+LOWER and pointer layers), then drag the `.uf2` onto the `RPI-RP2` drive.
+Flash both halves with the same file.
+
+</Step>
+</Steps>
+
+<Callout title="No EE_CLR dance">
+VIA layers re-seed from the firmware automatically on the first boot of every
+new build. Argos combos, tap dances and DPI settings survive reflashing.
+</Callout>
+
+## CI
+
+Every push builds all `qmk.json` targets via GitHub Actions and publishes the
+firmware to the Releases page.

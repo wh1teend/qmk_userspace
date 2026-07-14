@@ -1,0 +1,100 @@
+---
+title: Configuration
+description: Every knob in users/wh1teend/config.h
+---
+
+Everything is tuned in `users/wh1teend/config.h`: uncomment a line, change
+the value, then
+
+```sh
+qmk userspace-compile
+```
+
+and flash. No `EE_CLR` needed — layers re-seed automatically.
+
+## Feature switches
+
+| Define | Default | Enables |
+|--------|:-------:|---------|
+| `POINTER_ACCEL` | ✅ | speed-based pointer acceleration |
+| `DRAGSCROLL_AXIS_LOCK` | ✅ | drag-scroll sticks to the dominant axis |
+| `DRAGSCROLL_INERTIA` | ✅ | a flick keeps scrolling after the ball stops; touching the ball ends it |
+| `CHARYBDIS_DRAGSCROLL_REVERSE_Y` | ✅ | natural (macOS-style) scroll direction |
+| `AUTO_MOUSE_DEFAULT_LAYER` | ❌ | native auto pointer layer on ball movement (also needs `POINTING_DEVICE_AUTO_MOUSE_ENABLE = yes` in `rules.mk`) |
+
+`rules.mk` also enables Caps Word, Repeat Key and OS detection (word-jump and
+app-switcher chords pick macOS or Ctrl/Alt variants by the connected host).
+`config.h` sets `PERMISSIVE_HOLD` (fast Shift+key chords resolve as chords,
+not space+key) and `RGB_MATRIX_TIMEOUT` (LEDs off after 5 idle minutes).
+
+## Common tweaks
+
+<Accordions type="multiple">
+<Accordion title="Pointer too jumpy">
+Raise `POINTER_ACCEL_DIV` (8 → 12…16) — the acceleration curve gets flatter.
+</Accordion>
+<Accordion title="Carret too fast">
+Raise `CARRET_STEP` (55 → 80…120) — more ball travel per arrow tap.
+</Accordion>
+<Accordion title="Carret repeat too slow">
+Lower `CARRET_TAP_INTERVAL_MS` (16 → 8) — taps drain out faster on a flick.
+</Accordion>
+<Accordion title="Word-jump chord wrong">
+It is picked by the detected OS; force one with
+`#define CARRET_WORD_KEY(arrow) C(arrow)`.
+</Accordion>
+</Accordions>
+
+## All knobs
+
+<Tabs items={['Pointer', 'Carret', 'Scrub', 'Drag-scroll', 'VIA']}>
+<Tab value="Pointer">
+
+Acceleration is off while sniping.
+
+| Define | Default | Meaning |
+|--------|:-------:|---------|
+| `POINTER_ACCEL_THRESHOLD` | 4 | counts per report where acceleration starts; below it motion is 1:1 |
+| `POINTER_ACCEL_DIV` | 8 | counts above threshold per +1×; lower = stronger curve |
+| `POINTER_ACCEL_LIMIT` | 4 | maximum multiplier |
+
+</Tab>
+<Tab value="Carret">
+
+| Define | Default | Meaning |
+|--------|:-------:|---------|
+| `CARRET_STEP` | 55 | ball travel per arrow tap; lower = more sensitive |
+| `CARRET_STEP_SNIPING` | `×4` | travel per word jump (sniping on) |
+| `CARRET_TAP_INTERVAL_MS` | 16 | minimum pause between taps |
+| `CARRET_IDLE_TIMEOUT_MS` | 300 | buffer reset after the ball rests; kills phantom taps |
+| `CARRET_ACCEL_DIV` | 12 | ball speed shrinks the step, down to ¼; higher = weaker, 0 = off |
+| `CARRET_WORD_KEY(arrow)` | by OS | word-jump chord; define to force one |
+| `CARRET_REVERSE_X` / `_Y` | off | invert carret axes |
+
+</Tab>
+<Tab value="Scrub">
+
+| Define | Default | Meaning |
+|--------|:-------:|---------|
+| `SCRUB_STEP` | 80 | ball travel per tap while scrubbing |
+| `SCRUB_UNDO_KEY` / `SCRUB_REDO_KEY` | `G(KC_Z)` / `LSG(KC_Z)` | what `SCRB_HST` taps (macOS defaults) |
+
+</Tab>
+<Tab value="Drag-scroll">
+
+| Define | Default | Meaning |
+|--------|:-------:|---------|
+| `DRAGSCROLL_AXIS_LOCK_TIMEOUT_MS` | 250 | the locked axis is kept until the ball rests this long |
+| `DRAGSCROLL_INERTIA_ENGAGE_MS` | 20 | coast starts only if real ticks came faster than this |
+| `DRAGSCROLL_INERTIA_DECAY` | 15 | % the tick interval grows per coast tick; higher = shorter coast |
+| `DRAGSCROLL_INERTIA_CUTOFF_MS` | 120 | coast stops once ticks get slower than this |
+
+</Tab>
+<Tab value="VIA">
+
+| Define | Default | Meaning |
+|--------|:-------:|---------|
+| `DYNAMIC_KEYMAP_LAYER_COUNT` | 4 | layers stored in EEPROM; keep ≥ layer count in `common.h` |
+
+</Tab>
+</Tabs>

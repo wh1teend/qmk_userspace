@@ -21,6 +21,19 @@ enum wh1teend_keycodes {
     // Carret momentary / toggle, mirroring DRGSCRL / DRG_TOG.
     CARRETM,
     CRT_TOG,
+    // Carret with Shift held: the ball extends the text selection.
+    CRT_SEL,
+    // Toggle-hold mouse button 1: drag without keeping the key down.
+    BTN_LOCK,
+    // Scrub modes: while held, the ball taps keys instead of moving the
+    // pointer. Tabs (Ctrl+PgUp/PgDn), volume, macOS spaces (Ctrl+←/→),
+    // undo/redo. Keep the order in sync with enum scrub_modes in common.c.
+    SCRB_TAB,
+    SCRB_VOL,
+    SCRB_SPC,
+    SCRB_HST,
+    // App switcher: holds Cmd/Alt (by OS) while the ball taps Tab.
+    SCRB_APP,
 };
 
 bool get_pointer_carret_enabled(void);

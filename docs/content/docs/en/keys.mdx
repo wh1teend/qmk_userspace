@@ -1,0 +1,90 @@
+---
+title: Keys & modes
+description: Trackball modes, scrub keys, custom keycodes and RGB indication
+---
+
+## Trackball modes
+
+The LED color always shows which mode is active.
+
+| Mode | The ball… | Turn on/off | LED |
+|------|-----------|-------------|-----|
+| **Pointer** | moves the mouse pointer, accelerating with speed | always on | default |
+| **Sniping** | moves the pointer slowly and precisely, no acceleration | hold `SNIPING` · toggle `SNP_TOG` · auto while `PT_Z`/`PT_SLSH` held | 🔴 red |
+| **Drag-scroll** | scrolls, sticking to one axis; a flick coasts with inertia | hold `DRGSCRL` · toggle `DRG_TOG` · tap `DRGT_CRTT` | 🟢 green |
+| **Carret** | moves the text cursor with arrow keys; jumps word-wise when sniping is on | hold `CARRETM` · toggle `CRT_TOG` · hold `DRGT_CRTT` | 🔵 azure |
+
+Drag-scroll and carret are mutually exclusive — turning one on turns the
+other off.
+
+## Scrub keys (hold + roll the ball)
+
+Live on the LOWER layer (left thumb), left hand — so the right hand stays on
+the ball.
+
+| Key | While held, the ball… | Placement (LOWER) |
+|-----|------------------------|-------------------|
+| `SCRB_TAB` | switches tabs (Ctrl+PgUp/PgDn) | middle row, inner column |
+| `SCRB_VOL` | changes volume | top row, inner column |
+| `SCRB_SPC` | switches macOS spaces (Ctrl+←/→) | bottom row, outer column |
+| `SCRB_HST` | scrubs undo/redo (⌘Z / ⇧⌘Z) | bottom row, 2nd column |
+| `SCRB_APP` | walks the app switcher (Cmd/Alt+Tab by OS, mod held for you) | bottom row, 3rd column |
+
+## Pointer layer
+
+Held via `PT_Z` (Z) or `PT_SLSH` (/). The 3x5 core, identical on every board:
+
+```text
+QK_BOOT  DPI_RMOD DPI_MOD  S_D_RMOD S_D_MOD  │  S_D_MOD  S_D_RMOD DPI_MOD  DPI_RMOD QK_BOOT
+LGUI     LALT     LCTL     LSFT     DRGT_CRTT│  CRT_TOG  RSFT     RCTL     RALT     RGUI
+ · ·     DRGSCRL  SNIPING  DRG_TOG  SNP_TOG  │  SNP_TOG  DRG_TOG  SNIPING  DRGSCRL   · ·
+                  BTN2     BTN1     BTN3     │  BTN_LOCK BTN1
+```
+
+`DPI_MOD`/`DPI_RMOD` step the pointer DPI up/down, `S_D_MOD`/`S_D_RMOD` do
+the same for sniping DPI.
+
+## Custom keycodes
+
+Declared in `users/wh1teend/common.h`, handled in `common.c`. The web
+configurator shows them as unknown codes; assign via the **Any** key using
+the hex value.
+
+<Callout type="warn" title="Browser edits don't survive a flash">
+Layers re-seed from `keymap.c` on every new build. Argos combos, tap dances
+and DPI settings live elsewhere in EEPROM and survive.
+</Callout>
+
+| Key | Hex (Any) | Behavior |
+|-----|-----------|----------|
+| `DRGT_CRTT` | `0x7E40` | Tap — toggle drag-scroll · Hold — toggle carret |
+| `CARRETM`   | `0x7E41` | Carret while held (not placed on any board — spare) |
+| `CRT_TOG`   | `0x7E42` | Toggle carret |
+| `CRT_SEL`   | `0x7E43` | While held: carret + Shift — the ball extends the text selection (not placed — spare) |
+| `BTN_LOCK`  | `0x7E44` | Toggle-hold mouse button 1: drag without keeping the key down |
+| `SCRB_TAB`  | `0x7E45` | Scrub: tabs |
+| `SCRB_VOL`  | `0x7E46` | Scrub: volume |
+| `SCRB_SPC`  | `0x7E47` | Scrub: macOS spaces |
+| `SCRB_HST`  | `0x7E48` | Scrub: undo/redo |
+| `SCRB_APP`  | `0x7E49` | Scrub: app switcher (holds Cmd/Alt for you) |
+
+Typing extras: double-tap Shift starts **Caps Word** (caps until the word
+ends; `CW_TOGG` also sits on RAISE next to `EE_CLR`), and **`QK_REP`** right
+of it repeats the last key.
+
+## RGB indication
+
+| Color | State |
+|-------|-------|
+| 🔵 Azure | Carret |
+| 🟢 Green | Drag-scroll |
+| 🔴 Red | Sniping |
+| 🟠 Orange | Mouse button 1 locked (`BTN_LOCK`) |
+| ⚪ White | Caps Word active |
+| 🟡 Gold | LOWER layer held |
+| 🟣 Purple | RAISE layer held |
+| Default | Nothing active |
+
+The list is also the priority order: trackball modes win over the lock, the
+lock over Caps Word, Caps Word over layers. LEDs turn off after 5 idle
+minutes (`RGB_MATRIX_TIMEOUT`).
