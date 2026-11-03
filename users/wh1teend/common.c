@@ -3,6 +3,14 @@
 
 #include "common.h"
 
+#ifdef COMMUNITY_MODULES_ENABLE
+// Pointer state (bkpd_*) and the DRGSCRL/SNIPING keycodes moved out of the
+// keyboard into the bastardkb/bk_pointing_device module. Only keymap.c gets
+// the module keycodes for free, via keymap_introspection.c.
+#    include "bk_pointing_device.h"
+#    include "community_modules_introspection.h"
+#endif // COMMUNITY_MODULES_ENABLE
+
 #ifdef POINTING_DEVICE_ENABLE
 // Carret mode: trackball movement taps the arrow keys instead of moving the
 // pointer.
@@ -125,7 +133,7 @@ bool get_pointer_carret_enabled(void) {
 void set_pointer_carret_enabled(bool enable) {
     if (enable) {
         // The two modes fight over the same trackball; last one wins.
-        charybdis_set_pointer_dragscroll_enabled(false);
+        bkpd_set_pointer_dragscroll_enabled(false);
     } else {
         // Leftover travel must not leak into the next activation.
         carret_reset();
@@ -145,16 +153,16 @@ static void pointer_mode_rgb_task(void) {
     static uint8_t last_mode = 0;
 
     uint8_t layer = get_highest_layer(layer_state);
-    uint8_t mode = carret_enabled                            ? 3
-                   : charybdis_get_pointer_dragscroll_enabled() ? 2
-                   : charybdis_get_pointer_sniping_enabled()    ? 1
-                   : btn1_locked                                ? 6
+    uint8_t mode = carret_enabled                          ? 3
+                   : bkpd_get_pointer_dragscroll_enabled() ? 2
+                   : bkpd_get_pointer_sniping_enabled()    ? 1
+                   : btn1_locked                           ? 6
 #        ifdef CAPS_WORD_ENABLE
-                   : is_caps_word_on()                          ? 7
+                   : is_caps_word_on()                     ? 7
 #        endif // CAPS_WORD_ENABLE
-                   : layer == LAYER_LOWER                       ? 4
-                   : layer == LAYER_RAISE                       ? 5
-                                                                : 0;
+                   : layer == LAYER_LOWER                  ? 4
+                   : layer == LAYER_RAISE                  ? 5
+                                                           : 0;
     if (mode == last_mode) {
         return;
     }
@@ -231,7 +239,7 @@ static void ball_scrub_task(report_mouse_t *mouse_report) {
         return;
     }
 
-    bool        sniping = charybdis_get_pointer_sniping_enabled();
+    bool        sniping = bkpd_get_pointer_sniping_enabled();
     scrub_map_t map;
     uint16_t    step;
     if (scrub_mode != SCRUB_NONE) {
@@ -397,7 +405,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         ball_scrub_task(&mouse_report);
     }
 #    ifdef POINTER_ACCEL
-    else if (!charybdis_get_pointer_sniping_enabled()) {
+    else if (!bkpd_get_pointer_sniping_enabled()) {
         pointer_accel_task(&mouse_report);
     }
 #    endif // POINTER_ACCEL
@@ -407,7 +415,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     }
 
 #    if defined(DRAGSCROLL_AXIS_LOCK) || defined(DRAGSCROLL_INERTIA)
-    if (charybdis_get_pointer_dragscroll_enabled()) {
+    if (bkpd_get_pointer_dragscroll_enabled()) {
 #        ifdef DRAGSCROLL_AXIS_LOCK
         dragscroll_axis_lock_task(&mouse_report);
 #        endif // DRAGSCROLL_AXIS_LOCK
@@ -453,11 +461,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 drgt_crtt_timer = timer_read();
             } else if (timer_elapsed(drgt_crtt_timer) < TAPPING_TERM) {
-                bool enable = !charybdis_get_pointer_dragscroll_enabled();
+                bool enable = !bkpd_get_pointer_dragscroll_enabled();
                 if (enable && get_pointer_carret_enabled()) {
                     set_pointer_carret_enabled(false);
                 }
-                charybdis_set_pointer_dragscroll_enabled(enable);
+                bkpd_set_pointer_dragscroll_enabled(enable);
             } else {
                 set_pointer_carret_enabled(!get_pointer_carret_enabled());
             }
@@ -521,7 +529,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_SNIPING_ON_LAYER
 layer_state_t layer_state_set_user(layer_state_t state) {
-    charybdis_set_pointer_sniping_enabled(layer_state_cmp(state, CHARYBDIS_AUTO_SNIPING_ON_LAYER));
+    bkpd_set_pointer_sniping_enabled(layer_state_cmp(state, CHARYBDIS_AUTO_SNIPING_ON_LAYER));
     return state;
 }
 #    endif // CHARYBDIS_AUTO_SNIPING_ON_LAYER

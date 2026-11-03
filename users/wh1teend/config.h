@@ -18,14 +18,18 @@
 #define RGB_MATRIX_TIMEOUT 300000
 
 #ifdef POINTING_DEVICE_ENABLE
-// Native auto pointer layer: uncomment here and set
-// POINTING_DEVICE_AUTO_MOUSE_ENABLE = yes in rules.mk.
-// #define AUTO_MOUSE_DEFAULT_LAYER 3
+// LAYER_POINTER. The bk_pointing_device module always compiles the auto mouse
+// layer in and keys its DPI indicator and precision mode off this value, so it
+// has to name the pointer layer even though auto-switching stays off at runtime
+// (the module toggles that itself, off by default).
+#    define AUTO_MOUSE_DEFAULT_LAYER 3
 
 /* Drag-scroll */
 
 // Natural (macOS-style) scroll direction. Remove to scroll the other way.
-#    define CHARYBDIS_DRAGSCROLL_REVERSE_Y
+// The module only seeds its EEPROM flag from this on a fresh config, so change
+// it together with EE_CLR on a board that has already booted this firmware.
+#    define BK_POINTING_DEVICE_DRAGSCROLL_REVERSE_Y
 
 // Stick to the dominant axis instead of drifting diagonally.
 #    define DRAGSCROLL_AXIS_LOCK
